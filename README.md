@@ -1,2 +1,2 @@
 # ruby-brain
-Bainfuck Interpreter in Ruby
+Brainfuck Interpreter in Ruby
