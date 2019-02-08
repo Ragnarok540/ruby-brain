@@ -1,57 +1,105 @@
 class BrainFuck
 
   def initialize(program)
-    @program = program
-    @pointer = 0
-    @array = Array.new(30000, 0)
+    @prog = program.to_s
+    @progPtr = 0
+    @dataPtr = 0
+    @dataArr = Array.new(30000, 0)
+    @stack = Array.new
+    @jump = Array.new
   end
   
-  def pointer?
-    puts "Pointer is #@pointer"
+  def dataPtr?
+    puts "Data Pointer is #@dataPtr"
+  end
+  
+  def progPtr?
+    puts "Program Pointer is #@progPtr"
   end
   
   def program?
-    puts "Program is #@program"
+    puts "Program is #@prog"
   end
   
-  def array?
-    puts "Array is #@array"
+  def dataArr?
+    puts "Data Array is #@dataArr"
+  end
+  
+  def jump?
+    puts "Jump Stack is #@jump"
   end
     
-  def incPointer
-    @pointer = @pointer + 1
+  def incDataPtr
+    @dataPtr = @dataPtr + 1
   end
   
-  def decPointer
-    @pointer = @pointer - 1
+  def decDataPtr
+    @dataPtr = @dataPtr - 1
   end
   
   def incCell
-    @array[@pointer] = @array[@pointer] + 1
+    @dataArr[@dataPtr] = @dataArr[@dataPtr] + 1
   end
   
   def decCell
-    @array[@pointer] = @array[@pointer] - 1
+    @dataArr[@dataPtr] = @dataArr[@dataPtr] - 1
   end
   
   def output
-    puts @array[@pointer].chr
+    putc @dataArr[@dataPtr].chr
   end
   
   def input
-    @array[@pointer] = gets.to_i
+    @dataArr[@dataPtr] = gets.to_i
   end
   
+  def startLoop
+    @progPtr = @jump[@progPtr] if @dataArr[@dataPtr]  == 0
+  end
+  
+  def endLoop
+    @progPtr = @jump[@progPtr] unless @dataArr[@dataPtr] == 0
+  end
+  
+  def jumps
+    @prog.chars.each_with_index do |item, index|
+      case item 
+        when "["
+          @stack.push(index)
+        when "]"
+          @jump[index] = @stack.pop
+          @jump[@jump[index]] = index
+      end
+    end
+  end
+  
+  def execute
+    self.jumps
+    while @progPtr < @prog.bytesize
+      instruction = @prog[@progPtr]
+      case instruction
+        when ">"
+          self.incDataPtr
+        when "<"
+          self.decDataPtr
+        when "+"
+          self.incCell
+        when "-"
+          self.decCell
+        when "."
+          self.output
+        when ","
+          self.input
+        when "["
+          self.startLoop
+        when "]"
+          self.endLoop
+      end
+      @progPtr = @progPtr + 1
+    end
+  end
 end
 
-bf = BrainFuck.new("[->+<]")
+bf = BrainFuck.new("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
 
-bf.incPointer
-bf.incCell
-bf.pointer?
-bf.program?
-bf.output
-bf.incPointer
-bf.input
-bf.output
-bf.array?
+bf.execute
