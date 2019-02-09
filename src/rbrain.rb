@@ -26,39 +26,7 @@ class BrainFuck
   end
   
   def jump?
-    puts "Jump Stack is #@jump"
-  end
-    
-  def incDataPtr
-    @dataPtr = @dataPtr + 1
-  end
-  
-  def decDataPtr
-    @dataPtr = @dataPtr - 1
-  end
-  
-  def incCell
-    @dataArr[@dataPtr] = @dataArr[@dataPtr] + 1
-  end
-  
-  def decCell
-    @dataArr[@dataPtr] = @dataArr[@dataPtr] - 1
-  end
-  
-  def output
-    putc @dataArr[@dataPtr].chr
-  end
-  
-  def input
-    @dataArr[@dataPtr] = gets.to_i
-  end
-  
-  def startLoop
-    @progPtr = @jump[@progPtr] if @dataArr[@dataPtr]  == 0
-  end
-  
-  def endLoop
-    @progPtr = @jump[@progPtr] unless @dataArr[@dataPtr] == 0
+    puts "Jump Array is #@jump"
   end
   
   def jumps
@@ -76,28 +44,28 @@ class BrainFuck
   def execute
     self.jumps
     while @progPtr < @prog.bytesize
-      instruction = @prog[@progPtr]
-      case instruction
+      case @prog[@progPtr]
         when ">"
-          self.incDataPtr
+          @dataPtr = @dataPtr + 1
         when "<"
-          self.decDataPtr
+          @dataPtr = @dataPtr - 1
         when "+"
-          self.incCell
+          @dataArr[@dataPtr] = @dataArr[@dataPtr] + 1
         when "-"
-          self.decCell
+          @dataArr[@dataPtr] = @dataArr[@dataPtr] - 1
         when "."
-          self.output
+          putc @dataArr[@dataPtr].chr
         when ","
-          self.input
+          @dataArr[@dataPtr] = gets.to_i
         when "["
-          self.startLoop
+          @progPtr = @jump[@progPtr] if @dataArr[@dataPtr] == 0
         when "]"
-          self.endLoop
+          @progPtr = @jump[@progPtr] unless @dataArr[@dataPtr] == 0
       end
       @progPtr = @progPtr + 1
     end
   end
+  
 end
 
 bf = BrainFuck.new("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
