@@ -1,73 +1,51 @@
 class BrainFuck
 
-  def initialize(program)
-    @prog = program.to_s
-    @progPtr = 0
-    @dataPtr = 0
-    @dataArr = Array.new(30000, 0)
-    @stack = Array.new
-    @jump = Array.new
+  attr_accessor :prog, :progPtr, :dataPtr, :dataArr, :jump
+
+  def initialize(prog)
+    self.prog = prog.to_s
+    self.progPtr = 0
+    self.dataPtr = 0
+    self.dataArr = Array.new(30000, 0)
+    self.jump = Array.new
   end
-  
-  def dataPtr?
-    puts "Data Pointer is #@dataPtr"
-  end
-  
-  def progPtr?
-    puts "Program Pointer is #@progPtr"
-  end
-  
-  def program?
-    puts "Program is #@prog"
-  end
-  
-  def dataArr?
-    puts "Data Array is #@dataArr"
-  end
-  
-  def jump?
-    puts "Jump Array is #@jump"
-  end
-  
+
   def jumps
-    @prog.chars.each_with_index do |item, index|
+    stack = Array.new
+    self.prog.chars.each_with_index do |item, index|
       case item 
         when "["
-          @stack.push(index)
+          stack.push(index)
         when "]"
-          @jump[index] = @stack.pop
-          @jump[@jump[index]] = index
+          self.jump[index] = stack.pop
+          self.jump[self.jump[index]] = index
       end
     end
   end
   
   def execute
     self.jumps
-    while @progPtr < @prog.bytesize
-      case @prog[@progPtr]
+    while self.progPtr < self.prog.bytesize
+      case self.prog[self.progPtr]
         when ">"
-          @dataPtr = @dataPtr + 1
+          self.dataPtr = self.dataPtr + 1
         when "<"
-          @dataPtr = @dataPtr - 1
+          self.dataPtr = self.dataPtr - 1
         when "+"
-          @dataArr[@dataPtr] = @dataArr[@dataPtr] + 1
+          self.dataArr[self.dataPtr] = self.dataArr[self.dataPtr] + 1
         when "-"
-          @dataArr[@dataPtr] = @dataArr[@dataPtr] - 1
+          self.dataArr[self.dataPtr] = self.dataArr[self.dataPtr] - 1
         when "."
-          putc @dataArr[@dataPtr].chr
+          putc self.dataArr[self.dataPtr].chr
         when ","
-          @dataArr[@dataPtr] = gets.to_i
+          self.dataArr[self.dataPtr] = gets.to_i
         when "["
-          @progPtr = @jump[@progPtr] if @dataArr[@dataPtr] == 0
+          self.progPtr = self.jump[self.progPtr] if self.dataArr[self.dataPtr] == 0
         when "]"
-          @progPtr = @jump[@progPtr] unless @dataArr[@dataPtr] == 0
+          self.progPtr = self.jump[self.progPtr] unless self.dataArr[self.dataPtr] == 0
       end
-      @progPtr = @progPtr + 1
+      self.progPtr = self.progPtr + 1
     end
   end
   
 end
-
-bf = BrainFuck.new("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
-
-bf.execute
