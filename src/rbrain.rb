@@ -17,10 +17,15 @@ class BrainFuck
         when "["
           stack.push(index)
         when "]"
-          self.jump[index] = stack.pop
-          self.jump[self.jump[index]] = index
+          unless stack.at(-1) == nil
+            self.jump[index] = stack.pop
+            self.jump[self.jump[index]] = index
+          else
+            raise "Unmatched ] at #{index}"
+         end
       end
     end
+    raise "Unmatched [ at #{stack.at(-1)}" if stack.length > 0
   end
   
   def execute
@@ -28,13 +33,13 @@ class BrainFuck
     while self.progPtr < self.prog.bytesize
       case self.prog[self.progPtr]
         when ">"
-          self.dataPtr = self.dataPtr + 1
+          self.dataPtr += 1
         when "<"
-          self.dataPtr = self.dataPtr - 1
+          self.dataPtr -= 1
         when "+"
-          self.dataArr[self.dataPtr] = self.dataArr[self.dataPtr] + 1
+          self.dataArr[self.dataPtr] += 1
         when "-"
-          self.dataArr[self.dataPtr] = self.dataArr[self.dataPtr] - 1
+          self.dataArr[self.dataPtr] -= 1
         when "."
           putc self.dataArr[self.dataPtr].chr
         when ","
@@ -44,7 +49,7 @@ class BrainFuck
         when "]"
           self.progPtr = self.jump[self.progPtr] unless self.dataArr[self.dataPtr] == 0
       end
-      self.progPtr = self.progPtr + 1
+      self.progPtr += 1
     end
   end
   
