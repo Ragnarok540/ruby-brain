@@ -22,7 +22,7 @@ class BrainFuck
             self.jump[self.jump[index]] = index
           else
             raise "Unmatched ] at #{index}"
-         end
+          end
       end
     end
     raise "Unmatched [ at #{stack.at(-1)}" if stack.length > 0
