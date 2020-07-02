@@ -13,7 +13,7 @@ def process_argv(option)
       puts "  -v, --version  print version number on screen and exit"
       exit
     when "-v", "--version"
-      puts "ruby-brain version 0.0.1 - Ruby BrainFuck Interpreter"
+      puts "ruby-brain version 0.0.2 - Ruby BrainFuck Interpreter"
       exit
     else
       @options[:file_name] = option

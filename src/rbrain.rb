@@ -1,12 +1,12 @@
 class BrainFuck
 
-  attr_accessor :prog, :progPtr, :dataPtr, :dataArr, :jump
+  attr_accessor :prog, :prog_ptr, :data_ptr, :data_arr, :jump
 
   def initialize(prog)
     self.prog = prog.to_s
-    self.progPtr = 0
-    self.dataPtr = 0
-    self.dataArr = Array.new(30000, 0)
+    self.prog_ptr = 0
+    self.data_ptr = 0
+    self.data_arr = Array.new(30000, 0)
     self.jump = Array.new
   end
 
@@ -30,26 +30,30 @@ class BrainFuck
   
   def execute
     self.jumps
-    while self.progPtr < self.prog.bytesize
-      case self.prog[self.progPtr]
-        when ">"
-          self.dataPtr += 1
-        when "<"
-          self.dataPtr -= 1
-        when "+"
-          self.dataArr[self.dataPtr] += 1
-        when "-"
-          self.dataArr[self.dataPtr] -= 1
-        when "."
-          putc self.dataArr[self.dataPtr].chr
-        when ","
-          self.dataArr[self.dataPtr] = gets.to_i
-        when "["
-          self.progPtr = self.jump[self.progPtr] if self.dataArr[self.dataPtr] == 0
-        when "]"
-          self.progPtr = self.jump[self.progPtr] unless self.dataArr[self.dataPtr] == 0
+    while self.prog_ptr < self.prog.bytesize
+      case self.prog[self.prog_ptr]
+      when ">"
+        self.data_ptr += 1
+      when "<"
+        self.data_ptr -= 1
+      when "+"
+        self.data_arr[self.data_ptr] += 1
+      when "-"
+        self.data_arr[self.data_ptr] -= 1
+      when "."
+        putc self.data_arr[self.data_ptr].chr
+      when ","
+        self.data_arr[self.data_ptr] = gets.to_i
+      when "["
+        if self.data_arr[self.data_ptr] == 0
+          self.prog_ptr = self.jump[self.prog_ptr]
+        end
+      when "]"
+        unless self.data_arr[self.data_ptr] == 0
+          self.prog_ptr = self.jump[self.prog_ptr]
+        end
       end
-      self.progPtr += 1
+      self.prog_ptr += 1
     end
   end
   
